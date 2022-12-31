@@ -1,0 +1,17 @@
+Topic: Tracking a moving object with bio-inspired algorithms to command multiple UAVs
+
+
+Tracking the object: 
+
+The final project has an UI interface with video stream of the master drone where we can select an object with
+a rectangular box tool to identify the frame of the object, which then is given to the tracker as the designated
+object to track. The tracker then uses the ant-colony algorithm to produce the output movement of the
+drone(front, back, left, right). 
+
+The ant colony algorithm: 
+    To use ant colony alrogithm we must find a way to calculate pheromones, in our case pheromones are how much the
+frame matches the designated object frame ie, correlation matrix, the frame that has high correlation matrix with the designated object frame produces more pheromones. 
+    In our project the master drone calculates future frame for all possible movements, and calculates pheromones for all the possible future frames, and chooses the move for which it's future frame has highest pheromone. calculating pheromone is nothing but calculating a fitness function , pheromones fitness function's parameters are: designated object frame, future frame.
+
+calculating the future frame:
+future frame is calcualted by calculating the speed of the moving object. speed is calculated by laser speed gun attached to the master drone
