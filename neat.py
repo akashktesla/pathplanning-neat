@@ -1,13 +1,3 @@
-#nodes
-class Neuron():
-    #weight:float
-    #dendrites/connections:[]<dendrite>
-    #axons/connections:[]<dendrite>
-    def __init__(self,value,soma_terminal,axon_terminal):
-        self.value = value #f32
-        self.soma_terminal = soma_terminal # list of previous neural connections(dendrite)
-        self.axon_terminal = axon_terminal # list of next neural connections
-        
 class Node():
     def __init__(self,_input,output,weight,bias,is_disabled=False):
         self.input = _input
@@ -24,26 +14,26 @@ class Node():
 
     def print(self):
         print(f"input:{self.input} : output:{self.output} : weight:{self.weight} : bias:{self.bias} : is_disabled:{self.is_disabled}")
-              
+
 def str_to_bool(_str):
     if _str == "True":
         return True
     return False
 
-class Dendrite():
-    def __init__(self,weight,bias,neuron): 
-        self.weight = weight #f32
-        self.bias = bias #f32
-        self.neuron = neuron
-
 class NeuralNetwork():
-    def __init__(self,input_network):
-        self.input_network = input_network
-        self.is_disabled = False
+    #id_network contains input layer values
+    #c_nework connection network 
+    def __init__(self,input_network,output_network,id_network,c_network):
+        self.input_network = input_network # ids of input network 
+        self.output_network = output_network #ids of output network
+        self.id_network = id_network #dictionary of ids and values
+        self.c_nework = c_network 
     #returns output neural network
     def print(self):
-        for i in self.input_network:
+        for i in self.id_network:
             print(f"input:{i.input} : output:{i.output} : weight:{i.weight} : bias:{i.bias} : is_disabled:{i.is_disabled}")
+        for i in self.id_network:
+            print(f"")
     def evaluate(self):
         pass
 
@@ -91,13 +81,22 @@ def crossover(a,b):
             return_network.append(Node(temp[0],temp[1],temp[2],temp[3],is_disabled=False))
     return return_network
 
+def calculate(nn):
+    nn.print()
+    input_layer = nn.input_network
+
 def main():
-    nn = NeuralNetwork([Node(1,2,1.2,2.3),Node(2,3,3.2,2.1),Node(3,4,1.2,3.2)])
-    nn2 = NeuralNetwork([Node(1,2,1.2,2.3),Node(2,3,3.2,2.1),Node(1,4,3.1,4.4),Node(3,2,2.1,3.2,is_disabled=True)])
-    off_spiring = crossover(nn,nn2)
-    print(f'offspring: { off_spiring } ')
-    for i in off_spiring:
-        i.print()
+    nn = NeuralNetwork([1,2,3], #input network
+                       [8,9], #output network 
+                       {"1":3,"2":3,"3":3}, # id_network 
+                       [Node(1,2,1.2,2.3),Node(2,3,3.2,2.1),Node(3,4,1.2,3.2)]) #c_network
+    calculate(nn)
 
 if __name__ == "__main__":
     main()
+
+
+
+
+
+
