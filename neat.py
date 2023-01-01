@@ -6,6 +6,9 @@ class Node():
         self.bias = bias
         self.is_disabled = is_disabled
 
+    def calculate(self,value):
+        return value*self.weight+self.bias
+
     def to_string(self):
         return f"{self.input}-{self.output}-{self.weight}-{self.bias}-{self.is_disabled}"
 
@@ -22,18 +25,20 @@ def str_to_bool(_str):
 
 class NeuralNetwork():
     #id_network contains input layer values
-    #c_nework connection network 
-    def __init__(self,input_network,output_network,id_network,c_network):
-        self.input_network = input_network # ids of input network 
-        self.output_network = output_network #ids of output network
+    # c_network connection network 
+    def __init__(self,input_layer,output_layer,id_network,c_network):
+        self.input_layer = input_layer # ids of input layer 
+        self.output_layer = output_layer #ids of output layer
         self.id_network = id_network #dictionary of ids and values
-        self.c_nework = c_network 
+        self.c_network = c_network 
     #returns output neural network
     def print(self):
-        for i in self.id_network:
-            print(f"input:{i.input} : output:{i.output} : weight:{i.weight} : bias:{i.bias} : is_disabled:{i.is_disabled}")
-        for i in self.id_network:
-            print(f"")
+        print(f'input layer: {self.input_layer}')
+        print(f'output layer: {self.output_layer}')
+        print(f'id network: {self.id_network}')
+        for i in self.c_network:
+            i.print()
+
     def evaluate(self):
         pass
 
@@ -83,20 +88,29 @@ def crossover(a,b):
 
 def calculate(nn):
     nn.print()
-    input_layer = nn.input_network
+    for i in nn.c_network:
+        in_val = nn.id_network[str(i.input)]
+        val = i.calculate(in_val)
+        nn.id_network[str(i.output)] = val
+    print("valzkai ae")
+    nn.print()
 
 def main():
-    nn = NeuralNetwork([1,2,3], #input network
+    nn = NeuralNetwork([1,2,3,4], #input network
                        [8,9], #output network 
-                       {"1":3,"2":3,"3":3}, # id_network 
-                       [Node(1,2,1.2,2.3),Node(2,3,3.2,2.1),Node(3,4,1.2,3.2)]) #c_network
+                       {"1":2.3,"2":3.7,"3":3.3,"4":4.1,"5":0,"6":0,"7":0,"8":0,"9":0}, # id_network 
+                       [Node(1,5,1.2,2.3),Node(2,5,3.2,2.1),Node(3,5,3.2,1.4),
+                        Node(2,5,5.2,1.7),Node(2,6,4.5,2.2),
+                        Node(3,5,2.3,5.7),Node(3,7,1.2,3.2),
+                        Node(4,6,8.3,7.2),
+                        Node(5,8,4.3,2.2),
+                        Node(6,8,9.3,3.2),Node(6,9,3.7,5.8),
+                        Node(7,8,7.2,3.1),Node(7,9,7.2,4.7)
+                        ] #c_network
+                        
+                       )
     calculate(nn)
 
 if __name__ == "__main__":
     main()
-
-
-
-
-
 
