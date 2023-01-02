@@ -86,6 +86,9 @@ def crossover(a,b):
             return_network.append(Node(temp[0],temp[1],temp[2],temp[3],is_disabled=False))
     return return_network
 
+def mutation(nn):
+    nn.print()
+
 def calculate(nn):
     nn.print()
     for i in nn.c_network:
@@ -105,11 +108,8 @@ def main():
                         Node(4,6,8.3,7.2),
                         Node(5,8,4.3,2.2),
                         Node(6,8,9.3,3.2),Node(6,9,3.7,5.8),
-                        Node(7,8,7.2,3.1),Node(7,9,7.2,4.7)
-                        ] #c_network
-                        
-                       )
-    calculate(nn)
+                        Node(7,8,7.2,3.1),Node(7,9,7.2,4.7)])
+    mutation(nn)
 
 if __name__ == "__main__":
     main()
