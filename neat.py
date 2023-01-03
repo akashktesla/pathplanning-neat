@@ -88,6 +88,43 @@ def crossover(a,b):
 
 def mutation(nn):
     nn.print()
+    #convert id network to list
+    hidden_layer = []
+    for i in nn.id_network:
+        hidden_layer.append(i)
+    print(hidden_layer) 
+    for i in nn.input_layer:
+        hidden_layer.remove(i)
+    for i in nn.output_layer:
+        hidden_layer.remove(i)
+    print(f"hiddenlayer: {hidden_layer}")
+    # input to hiddenlayer
+    ith = []
+    for i in nn.input_layer:
+        for j in hidden_layer:
+            ith.append(f'{i}-{j}')
+    print(f"{ith}")
+    #hiddenlayer to  output layer
+    hto = []
+    for i in hidden_layer:
+        for j in nn.output_layer:
+            hto.append(f'{i}-{j}')
+    possible_connections = ith+hto
+    exsisting_connections = []
+
+
+    #exsisting connections
+    for i in nn.c_network:
+        exsisting_connections.append(f"{i.input}-{i.output}")
+    print(f"possible_connections: {possible_connections}")
+    print(f"exsisting connection: {exsisting_connections}")
+    for i in exsisting_connections:
+        try:
+            possible_connections.remove(i)
+        except:
+            pass
+    print(f"possible connections: {possible_connections}")
+
 
 def calculate(nn):
     nn.print()
@@ -99,10 +136,10 @@ def calculate(nn):
     nn.print()
 
 def main():
-    nn = NeuralNetwork([1,2,3,4], #input network
-                       [8,9], #output network 
+    nn = NeuralNetwork(['1','2','3','4'], #input network
+                       ['8','9'], #output network 
                        {"1":2.3,"2":3.7,"3":3.3,"4":4.1,"5":0,"6":0,"7":0,"8":0,"9":0}, # id_network 
-                       [Node(1,5,1.2,2.3),Node(2,5,3.2,2.1),Node(3,5,3.2,1.4),
+                       [Node(1,5,1.2,2.3),Node(1,6,3.2,2.1),Node(1,7,3.2,1.4),
                         Node(2,5,5.2,1.7),Node(2,6,4.5,2.2),
                         Node(3,5,2.3,5.7),Node(3,7,1.2,3.2),
                         Node(4,6,8.3,7.2),
@@ -113,4 +150,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
