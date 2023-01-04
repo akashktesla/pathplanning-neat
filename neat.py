@@ -1,10 +1,10 @@
 from random import randint
 import random
 
-class Node():
-    def __init__(self,_id,value):
-        self.id = _id
-        self.value = value
+# class Node():
+#     def __init__(self,_id,value):
+#         self.id = _id
+#         self.value = value
 
 class Connect():
     def __init__(self,innovation_number,_input,output,weight,is_disabled=False):
@@ -34,12 +34,14 @@ def str_to_bool(_str):
 class NeuralNetwork():
     #node_map contains input layer values
     # c_network connection network 
-    def __init__(self,input_layer,output_layer,node_map,c_network,next_ii,min_weight=0,max_weight=0):
+    def __init__(self,input_layer,output_layer,node_map,c_network,stepsize,next_in,next_nn,min_weight=0,max_weight=0):
         self.input_layer = input_layer # ids of input layer 
         self.output_layer = output_layer #ids of output layer
         self.node_map = node_map #dictionary of ids and values
         self.c_network = c_network 
-        self.next_ii = next_ii
+        self.next_in = next_in
+        self.next_nn = next_nn
+        self.mutation_stepsize = stepsize
         #calculate maximum weight
         weight_list = []
         for i in c_network:
@@ -150,25 +152,57 @@ def mutation(nn):
 
     #connecting the possible connection
     mutation_c(nn,possible_connections)
+    mutation_an(nn)
+    mutation_cw(nn)
+    nn.print()
     #adding new node
     #modifing exsisting weights sooo... mayb like with step size or some shit idk
 
 
-#connecting a possible connection
+#mutation connecting a possible connection
 def mutation_c(nn,pc):
     connection = pc[randint(0,len(pc)-1)]
     print(connection)
     _split = connection.split("-")
     _input = _split[0]
     _output = _split[1]
-    con_node = Connect(nn.next_ii,_input,_output,random.uniform(nn.min_weight,nn.max_weight))
-    #don't forget to update next_ii da
-    con_node.print()
+    con_node = Connect(nn.next_in,_input,_output,random.uniform(nn.min_weight,nn.max_weight))
 
-# add new node
+    #updates
+    nn.c_network.append(con_node)
+    #update next innovation number
+    nn.next_in +=1
+
+# mutation add new node
 def mutation_an(nn):
-   pass 
+    #create new node
+    node_id = nn.next_nn 
+    #don't forget to update next_nn 
+    #input to node
+    rin = nn.input_layer[randint(0,len(nn.input_layer)-1)]
+    #node to output
+    rout = nn.output_layer[randint(0,len(nn.output_layer)-1)]
+    #connection 
+    #input to node connection
+    itn_node = Connect(nn.next_in,rin,node_id,random.uniform(nn.min_weight,nn.max_weight))
+    #node to output connection
+    nto_node = Connect(nn.next_in+1,node_id,rout,random.uniform(nn.min_weight,nn.max_weight))
 
+    #updates
+    #updating connection network
+    nn.c_network.append(itn_node)
+    nn.c_network.append(nto_node)
+    #updating next innovation number
+    nn.next_in+=2
+    #initializing node in node map
+    nn.node_map[str(node_id)] = 0
+    nn.next_nn +=1
+
+
+def mutation_cw(nn):
+    random_node = nn.c_network[randint(0,len(nn.c_network)-1)]
+    random_node.weight = random.uniform(random_node.weight-nn.mutation_stepsize,random_node.weight+nn.mutation_stepsize)
+    # nn.print()
 
 
 
@@ -192,7 +226,9 @@ def main():
                         Connect(9,5,8,4.3),
                         Connect(10,6,8,9.3),Connect(11,6,9,3.7),
                         Connect(12,7,8,7.2),Connect(13,7,9,7.2)],
-                       13 #next innovation number
+                       2.5,#weights stepsize
+                       13, #next innovation number
+                       10, #next node number
                        )
     mutation(nn)
 
