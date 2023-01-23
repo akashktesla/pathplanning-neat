@@ -34,9 +34,10 @@ def str_to_bool(_str):
 class NeuralNetwork():
     #node_map contains input layer values
     # c_network connection network 
-    def __init__(self,input_layer,output_layer,node_map,c_network,stepsize,next_in,next_nn,min_weight=0,max_weight=0):
+    def __init__(self,input_layer,output_layer,hidden_layer,node_map,c_network,stepsize,next_in,next_nn,min_weight=0,max_weight=0):
         self.input_layer = input_layer # ids of input layer 
         self.output_layer = output_layer #ids of output layer
+        self.hidden_layer = hidden_layer
         self.node_map = node_map #dictionary of ids and values
         self.c_network = c_network 
         self.next_in = next_in
@@ -69,8 +70,8 @@ class NeuralNetwork():
         pass
 
 class Agent():
-    def __init__(self,inn):
-        self.nn = inn
+    def __init__(self,nn):
+        self.nn = nn
         self.tof = 0
         self.distance = 0
         self.displacement = 0
@@ -102,7 +103,7 @@ def crossover(a,b):
     for i in b.c_network:
         node_hm[i.to_key()] = i.to_string()
     asi = aset.union(bset)
-    print(f'node-hashmap: {node_hm}')
+    # print(f'node-hashmap: {node_hm}')
     return_network = []
     for i in asi:
         key = node_hm[i]
@@ -113,57 +114,56 @@ def crossover(a,b):
     return return_network
 
 def mutation(nn):
-    nn.print()
-    #convert id network to list
-    hidden_layer = []
-    for i in nn.node_map:
-        hidden_layer.append(i)
-    print(hidden_layer) 
-    for i in nn.input_layer:
-        hidden_layer.remove(i)
-    for i in nn.output_layer:
-        hidden_layer.remove(i)
-    print(f"hiddenlayer: {hidden_layer}")
-    # input to hiddenlayer
+    # print("mutation start")
+    nl = [nn]
+    tl = clone_list(nl)
+    for i in nl:
+        mutation_an(i)
+    nl = nl+tl
+    tl = clone_list(nl)
+    for i in nl:
+        mutation_c(i)
+    nl = nl+tl
+    tl = clone_list(nl)
+    for i in nl:
+        mutation_dn(i)
+    nl = nl+tl
+    tl = clone_list(nl)
+    for i in nl:
+        mutation_cw(i)
+    nl = nl+tl
+    return nl
+
+#mutation connecting a possible connection
+def mutation_c(nn):
+    hidden_layer = nn.hidden_layer
     ith = []
     for i in nn.input_layer:
         for j in hidden_layer:
             ith.append(f'{i}-{j}')
-    print(f"{ith}")
+    # print(f"{ith}")
     #hiddenlayer to  output layer
     hto = []
     for i in hidden_layer:
         for j in nn.output_layer:
             hto.append(f'{i}-{j}')
-    possible_connections = ith+hto
+    pc = ith+hto
     exsisting_connections = []
-
-    #exsisting connections
+    # print(f"possible connections :{pc}")
     for i in nn.c_network:
         exsisting_connections.append(f"{i.input}-{i.output}")
-    print(f"possible_connections: {possible_connections}")
-    print(f"exsisting connection: {exsisting_connections}")
+    # print(f"exsisting connections: {exsisting_connections}")
     for i in exsisting_connections:
         try:
-            possible_connections.remove(i)
+            pc.remove(i)
         except:
             pass
-    print(f"possible connections: {possible_connections}")
+    # print(f"possible connections: {pc}")
 
-    #connecting the possible connection
-    mutation_c(nn,possible_connections)
-    mutation_an(nn)
-    mutation_cw(nn)
-    mutation_dn(nn)
-    nn.print()
-    #adding new node
-    #modifing exsisting weights sooo... mayb like with step size or some shit idk
-
-
-#mutation connecting a possible connection
-def mutation_c(nn,pc):
-    connection = pc[randint(0,len(pc)-1)]
-    print(connection)
+    index = randint(0,len(pc)-1)
+    # print(f"index: {index}")
+    connection = pc[index]
+    # print(connection)
     _split = connection.split("-")
     _input = _split[0]
     _output = _split[1]
@@ -176,6 +176,7 @@ def mutation_c(nn,pc):
 
 # mutation add new node
 def mutation_an(nn):
+    # print("mutation an ")
     #create new node
     node_id = nn.next_nn 
     #don't forget to update next_nn 
@@ -198,17 +199,36 @@ def mutation_an(nn):
     #initializing node in node map
     nn.node_map[str(node_id)] = 0
     nn.next_nn +=1
+    # print("mutation an end ")
 
 
 def mutation_cw(nn):
     random_node = nn.c_network[randint(0,len(nn.c_network)-1)]
     random_node.weight = random.uniform(random_node.weight-nn.mutation_stepsize,random_node.weight+nn.mutation_stepsize)
-    # nn.print()
 
 #disables random node... mayb use it in cross over ig...
 def mutation_dn(nn):
     random_node = nn.c_network[randint(0,len(nn.c_network)-1)]
     random_node.is_disabled = True
+
+
+def clone_list(nl):
+    cl = []
+    for i in nl:
+        cl.append(clone(i))
+    return cl
+
+def clone(nn):
+    return NeuralNetwork(nn.input_layer,
+                         nn.output_layer,
+                         nn.hidden_layer,
+                         nn.node_map,
+                         nn.c_network,
+                         nn.mutation_stepsize,
+                         nn.next_in,
+                         nn.next_nn,
+                         nn.min_weight,
+                         nn.max_weight)
 
 def calculate(nn):
     # nn.print()
@@ -275,7 +295,26 @@ def main():
 
     # calculate(nn)
     # crossover_test()
-    mutation(nn)
+    # mutation(nn)
+
+def main2():
+    nn = NeuralNetwork(
+        [1,2,3,4,5,6,7,8,9,10],#input layer
+        [11,12,13,14],#output layer
+        [15],#hidden layer
+        {"1":2.3,"2":3.7,"3":3.3,"4":4.1,"5":0,"6":0,"7":0,"8":0,"9":0,"10":0,"11":0,"12":0,"13":0,"14":0,},#node map
+        [],#connection network
+        2.5,#stepsize
+        1,#next innovation number
+        16,#next node number
+        1,#min weight 
+        100 #max weight
+    )
+    #end
+    nl = mutation(nn)
+    for i in nl:
+        i.print()
+
 
 if __name__ == "__main__":
-    main()
+    main2()

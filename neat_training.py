@@ -6,6 +6,7 @@ try:
     import json
     from ursina.shaders import lit_with_shadows_shader
     from math import sin,cos
+    from neat import *
 
 except Exception as e:
     print(f"error: {e}")
@@ -36,8 +37,8 @@ class drone(Entity):
         global tof
         tof = int(time.time()-tof_const)
         global render
-        print(tof)
-        print(f'td: {td}')
+        # print(tof)
+        # print(f'td: {td}')
         for i in render:
             destroy(i)
         render.append(Text(text = f"Total distance travelled: {td}",y = 0.40,x = -.85,z = -1))
@@ -112,44 +113,71 @@ def update():
     raycast7 = raycast(aki.position,dir7)
     raycast8 = raycast(aki.position,dir8)
 
+    d1 = raycast1.distance
+    d2 = raycast2.distance
+    d3 = raycast3.distance
+    d4 = raycast4.distance
+    d5 = raycast5.distance
+    d6 = raycast6.distance
+    d7 = raycast7.distance
+    d8 = raycast8.distance
     #would later used as a input neural layer network
-    print(f'raycast 1 {raycast1.distance}')
-    print(f'raycast 2 {raycast2.distance}')
-    print(f'raycast 3 {raycast3.distance}')
-    print(f'raycast 4 {raycast4.distance}')
-    print(f'raycast 5 {raycast5.distance}')
-    print(f'raycast 6 {raycast6.distance}')
-    print(f'raycast 7 {raycast7.distance}')
-    print(f'raycast 8 {raycast8.distance}')
+    # print(f'raycast 1 {raycast1.distance}')
+    # print(f'raycast 2 {raycast2.distance}')
+    # print(f'raycast 3 {raycast3.distance}')
+    # print(f'raycast 4 {raycast4.distance}')
+    # print(f'raycast 5 {raycast5.distance}')
+    # print(f'raycast 6 {raycast6.distance}')
+    # print(f'raycast 7 {raycast7.distance}')
+    # print(f'raycast 8 {raycast8.distance}')
 
 
 def main():
-    app = Ursina()
-    global td
-    td = 0
-    global tof_const
-    tof_const = time.time()
-    global render_displacement
-    render_displacement = []
-    global vcamera
-    # window.fullscreen = True
-    window.exit_button.visible = False
-    window.fps_counter.enabled = False
-    window.title = "Simulation"
-    vcamera = EditorCamera()
-    global y
-    global render 
-    render = []
-    Entity(model='plane', scale=100, color=color.white, shader=lit_with_shadows_shader)
-    global entities
-    global aki
-    global speed
-    speed = 20
-    entities = []
-    aki = drone(model = "cube",position = (0,0.5,0),texture = "white_cube" )
-    wall_left = Entity(model='cube', collider='box', scale_y=3, origin_y=-.5, color=color.azure, x=-4)
-    pivot = Entity(position = (0,10,0))
-    cam = DirectionalLight(parent=pivot, y=2, z=3, shadows=True, rotation=(45, -45, 45))
-    app.run()
+    # app = Ursina()
+    # global td
+    # td = 0
+    # global tof_const
+    # tof_const = time.time()
+    # global render_displacement
+    # render_displacement = []
+    # global vcamera
+    # # window.fullscreen = True
+    # window.exit_button.visible = False
+    # window.fps_counter.enabled = False
+    # window.title = "Simulation"
+    # vcamera = EditorCamera()
+    # global y
+    # global render 
+    # render = []
+    # Entity(model='plane', scale=100, color=color.white, shader=lit_with_shadows_shader)
+    # global entities
+    # global aki
+    # global speed
+    # speed = 20
+    # entities = []
+    # aki = drone(model = "cube",position = (0,0.5,0),texture = "white_cube" )
+    # wall_left = Entity(model='cube', collider='box', scale_y=3, origin_y=-.5, color=color.azure, x=-4)
+    # pivot = Entity(position = (0,10,0))
+    # cam = DirectionalLight(parent=pivot, y=2, z=3, shadows=True, rotation=(45, -45, 45))
+
+    #1-8 raycast , 9,10 - input values
+    #Neural network stuff
+    #initial neural network
+    nn = NeuralNetwork(
+        [1,2,3,4,5,6,7,8,9,10],
+        [11,12,13,14],
+        {"1":2.3,"2":3.7,"3":3.3,"4":4.1,"5":0,"6":0,"7":0,"8":0,"9":0,"10":0,"11":0,"12":0,"13":0,"14":0,},
+        [],
+        2.5,
+        1,
+        15,
+        1,
+        100
+    )
+    #end
+    nl = mutation(nn)
+    print(f"nerual list {nl}")
+    # app.run()
+
 
 main()
