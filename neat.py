@@ -1,5 +1,6 @@
 from random import randint
 import random
+import copy
 
 # class Node():
 #     def __init__(self,_id,value):
@@ -116,22 +117,32 @@ def crossover(a,b):
 def mutation(nn):
     # print("mutation start")
     nl = [nn]
+    tl = [copy.deepcopy(nn)]
+    cl = []
+    for i in tl:
+        temp = mutation_an(i)
+        cl.append(temp)
+
+    nl = nl+cl
+
     tl = clone_list(nl)
-    for i in nl:
-        mutation_an(i)
-    nl = nl+tl
+    cl = []
+    for i in tl:
+        cl.append(mutation_c(i))
+    nl = nl+cl
+
     tl = clone_list(nl)
-    for i in nl:
-        mutation_c(i)
-    nl = nl+tl
+    cl = []
+    for i in tl:
+        cl.append(mutation_dn(i))
+    nl = nl+cl
+
     tl = clone_list(nl)
-    for i in nl:
-        mutation_dn(i)
-    nl = nl+tl
-    tl = clone_list(nl)
-    for i in nl:
-        mutation_cw(i)
-    nl = nl+tl
+    cl = []
+    for i in tl:
+        cl.append(mutation_cw(i))
+    nl = nl+cl
+
     return nl
 
 #mutation connecting a possible connection
@@ -173,6 +184,7 @@ def mutation_c(nn):
     nn.c_network.append(con_node)
     #update next innovation number
     nn.next_in +=1
+    return nn
 
 # mutation add new node
 def mutation_an(nn):
@@ -200,35 +212,27 @@ def mutation_an(nn):
     nn.node_map[str(node_id)] = 0
     nn.next_nn +=1
     # print("mutation an end ")
-
+    return nn
 
 def mutation_cw(nn):
-    random_node = nn.c_network[randint(0,len(nn.c_network)-1)]
-    random_node.weight = random.uniform(random_node.weight-nn.mutation_stepsize,random_node.weight+nn.mutation_stepsize)
+    if len(nn.c_network) >0:
+        random_node = nn.c_network[randint(0,len(nn.c_network)-1)]
+        random_node.weight = random.uniform(random_node.weight-nn.mutation_stepsize,random_node.weight+nn.mutation_stepsize)
+    return nn
 
 #disables random node... mayb use it in cross over ig...
 def mutation_dn(nn):
-    random_node = nn.c_network[randint(0,len(nn.c_network)-1)]
-    random_node.is_disabled = True
+    if len(nn.c_network) >0:
+        random_node = nn.c_network[randint(0,len(nn.c_network)-1)]
+        random_node.is_disabled = True
+    return nn
 
 
 def clone_list(nl):
     cl = []
     for i in nl:
-        cl.append(clone(i))
+        cl.append(copy.deepcopy(i))
     return cl
-
-def clone(nn):
-    return NeuralNetwork(nn.input_layer,
-                         nn.output_layer,
-                         nn.hidden_layer,
-                         nn.node_map,
-                         nn.c_network,
-                         nn.mutation_stepsize,
-                         nn.next_in,
-                         nn.next_nn,
-                         nn.min_weight,
-                         nn.max_weight)
 
 def calculate(nn):
     # nn.print()
@@ -312,8 +316,9 @@ def main2():
     )
     #end
     nl = mutation(nn)
-    for i in nl:
-        i.print()
+    print(nl)
+    # for i in nl:
+    #     i.print()
 
 
 if __name__ == "__main__":
