@@ -70,17 +70,6 @@ class NeuralNetwork():
     def evaluate(self):
         pass
 
-class Agent():
-    def __init__(self,nn):
-        self.nn = nn
-        self.tof = 0
-        self.distance = 0
-        self.displacement = 0
-        self.fitness = 0
-
-    def update_fitness(self):
-        #updates fitness according to the parameters
-        pass 
 
 #sigmoid
 def sigmoid(x):
@@ -240,9 +229,9 @@ def calculate(nn):
         in_val = nn.node_map[str(i.input)]
         val = i.calculate(in_val)
         nn.node_map[str(i.output)] = val
-    nn.print()
-    for i in nn.output_layer:
-        print(f"output at node:{i} is {nn.node_map[str(i)]}")
+    # nn.print()
+    # for i in nn.output_layer:
+        # print(f"output at node:{i} is {nn.node_map[str(i)]}")
 
 def crossover_test():
     parent1 = NeuralNetwork(['1','2','3','4'], #input network
@@ -316,7 +305,7 @@ def main2():
     )
     #end
     nl = mutation(nn)
-    print(nl)
+    # print(nl)
     # for i in nl:
     #     i.print()
 
