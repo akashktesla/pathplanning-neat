@@ -52,8 +52,9 @@ class Agent(Entity):
         pass
 
     def update(self):
+        # print(f"id: {self.pop_index}")
+        # print(f"alive: {self.is_alive}")
         if self.is_alive:
-            
             rot = self.rotation_y
             self.rotation_y = rot
             angle1 = (rot)*math.pi/180
@@ -96,17 +97,17 @@ class Agent(Entity):
             print(d1,d2,d3,d4,d5,d6,d7,d8)
 
             if mod(d1) < 0.55 :
-                self.is_alive = False
                 print("collision detected")
+                self.is_alive = False
             if mod(d3) < 0.55 :
-                self.is_alive = False
                 print("collision detected")
+                self.is_alive = False
             if mod(d5) < 0.55 :
-                self.is_alive = False
                 print("collision detected")
+                self.is_alive = False
             if mod(d7) < 0.55 :
-                self.is_alive = False
                 print("collision detected")
+                self.is_alive = False
 
             #setting the distance as input layer
             self.nn.node_map["1"] = d1
@@ -128,19 +129,19 @@ class Agent(Entity):
             #forward
             global speed
 
-            if _max == 11:
+            if _max == 16:
                 self.x += time.dt*speed*math.sin(angle1)
                 self.z += time.dt*speed*math.cos(angle1)
             #back
-            if _max == 12:
+            if _max == 17:
                 self.x += time.dt*speed*math.sin(angle5)
                 self.z += time.dt*speed*math.cos(angle5)
             #right
-            if _max == 13:
+            if _max == 18:
                 self.x += time.dt*speed*math.sin(angle3)
                 self.z += time.dt*speed*math.cos(angle3)
             #left
-            if _max == 14:
+            if _max == 19:
                 self.x += time.dt*speed*math.sin(angle7)
                 self.z += time.dt*speed*math.cos(angle7)
 
@@ -219,21 +220,21 @@ def update():
     pass
 def terrain_generation():
     global terrain
-    a = Enemy((0,0,20))
-    a.scale_x = 10
-    terrain.append(a)
-    #border
 
     a = Enemy((0,0,100))
     a.scale_x = 40
     terrain.append(a)
 
-    a = Enemy((20,0,50))
-    a.scale_z = 100
+    a = Enemy((0,0,-20))
+    a.scale_x = 40
     terrain.append(a)
 
-    a = Enemy((-20,0,50))
-    a.scale_z = 100
+    a = Enemy((20,0,40))
+    a.scale_z = 120
+    terrain.append(a)
+
+    a = Enemy((-20,0,40))
+    a.scale_z = 120
     terrain.append(a)
 
     for i in range(-10,100):
@@ -250,15 +251,18 @@ def population_degeneration():
         destroy(i)
 
 def neat_training():
+    #10,11,12 - player pos
+    #13,14,15 - target pos
     nn = NeuralNetwork(
-        [1,2,3,4,5,6,7,8,9,10],#input layer
-        [11,12,13,14],#output layer
-        [15],#hidden layer
-        {"1":2.3,"2":3.7,"3":3.3,"4":4.1,"5":0,"6":0,"7":0,"8":0,"9":0,"10":0,"11":0,"12":0,"13":0,"14":0,"15":0},#node map
+        [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],#input layer
+        [16,17,18,19],#output layer
+        [20],#hidden layer
+        {"1":2.3,"2":3.7,"3":3.3,"4":4.1,"5":0,"6":0,"7":0,"8":0,"9":0,"10":0,"11":0,"12":0,"13":0,"14":0,"15":0,
+         "16":0,"17":0,"18":0,"19":0,"20":0},#node map
         [],#connection network
         2.5,#stepsize
         1,#next innovation number
-        16,#next node number
+        21,#next node number
         1,#min weight 
         100 #max weight
     )
