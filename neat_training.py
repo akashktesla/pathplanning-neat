@@ -41,30 +41,33 @@ class Agent(Entity):
         self.position = pos
         self.texture = "white_cube"
         self.nn = nn
-        self.tof = 0
+        self.tof = 0 #time of flight
         self.distance = 0
         self.displacement = 0
         self.fitness = 0
         self.is_alive=True
+        self.target_pos = target
         # target pos to neural network
-        self.nn.node_map[13] = target[0]
-        self.nn.node_map[14] = target[1]
-        self.nn.node_map[15] = target[2]
+        self.st_time = time.time()
+        self.nn.node_map[12] = target[0]
+        self.nn.node_map[13] = target[1]
+        self.nn.node_map[14] = target[2]
     def input(self,key):
         #input for agent
         pass
 
     def update(self):
-        # print(f"id: {self.pop_index}")
-        # print(f"alive: {self.is_alive}")
+        print(f"dist:{self.distance}")
+        print(f"disp:{self.displacement}")
+        print(f"tof: {self.tof}")
+        print(f"id: {self.pop_index}")
+        print(f"alive: {self.is_alive}")
         if self.is_alive:
             # position to neural network
             pos = self.position
-            print(f"possss: {pos}")
-            self.nn.node_map[10] = pos[0]
-            self.nn.node_map[11] = pos[1]
-            self.nn.node_map[12] = pos[2]
-
+            self.nn.node_map[9] = pos[0]
+            self.nn.node_map[10] = pos[1]
+            self.nn.node_map[11] = pos[2]
 
             rot = self.rotation_y
             self.rotation_y = rot
@@ -105,19 +108,12 @@ class Agent(Entity):
             d6 = min(raycast6.distance,max_dist)
             d7 = min(raycast7.distance,max_dist)
             d8 = min(raycast8.distance,max_dist)
-            print(d1,d2,d3,d4,d5,d6,d7,d8)
+            # print(d1,d2,d3,d4,d5,d6,d7,d8)
 
-            if mod(d1) < 0.55 :
-                print("collision detected")
-                self.is_alive = False
-            if mod(d3) < 0.55 :
-                print("collision detected")
-                self.is_alive = False
-            if mod(d5) < 0.55 :
-                print("collision detected")
-                self.is_alive = False
-            if mod(d7) < 0.55 :
-                print("collision detected")
+            if mod(d1) < 0.55 or mod(d3) < 0.55 or mod(d5) < 0.55 or mod(d7) < 0.55:
+                # print("collision detected")
+                self.tof = time.time()-self.st_time
+                self.displacement = math.dist(pos,self.target_pos)
                 self.is_alive = False
 
             #setting the distance as input layer
@@ -140,21 +136,33 @@ class Agent(Entity):
             #forward
             global speed
 
-            if _max == 16:
-                self.x += time.dt*speed*math.sin(angle1)
-                self.z += time.dt*speed*math.cos(angle1)
+            if _max == 15:
+                x_dist = time.dt*speed*math.sin(angle1)
+                z_dist = time.dt*speed*math.cos(angle1)
+                self.x += x_dist
+                self.z += z_dist
+                self.distance += mod(x_dist) + mod(z_dist)
             #back
-            if _max == 17:
-                self.x += time.dt*speed*math.sin(angle5)
-                self.z += time.dt*speed*math.cos(angle5)
+            if _max == 16:
+                x_dist = time.dt*speed*math.sin(angle5)
+                z_dist = time.dt*speed*math.cos(angle5)
+                self.x += x_dist
+                self.z += z_dist
+                self.distance += mod(x_dist) + mod(z_dist)
             #right
-            if _max == 18:
-                self.x += time.dt*speed*math.sin(angle3)
-                self.z += time.dt*speed*math.cos(angle3)
+            if _max == 17:
+                x_dist = time.dt*speed*math.sin(angle3)
+                z_dist = time.dt*speed*math.cos(angle3)
+                self.x += x_dist
+                self.z += z_dist
+                self.distance += mod(x_dist) + mod(z_dist)
             #left
-            if _max == 19:
-                self.x += time.dt*speed*math.sin(angle7)
-                self.z += time.dt*speed*math.cos(angle7)
+            if _max == 18:
+                x_dist = time.dt*speed*math.sin(angle7)
+                z_dist = time.dt*speed*math.cos(angle7)
+                self.x += x_dist
+                self.z += z_dist
+                self.distance += mod(x_dist) + mod(z_dist)
 
     def update_fitness(self):
         #updates fitness according to the parameters
@@ -207,18 +215,18 @@ def population_degeneration():
 
 def neat_training():
     global generation_number
-    #10,11,12 - player pos
-    #13,14,15 - target pos
+    #9,10,11- player pos
+    #12,13,14 - target pos
     nn = NeuralNetwork(
-        [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],#input layer
-        [16,17,18,19],#output layer
-        [20],#hidden layer
+        [1,2,3,4,5,6,7,8,9,10,11,12,13,14],#input layer
+        [15,16,17,18],#output layer
+        [19],#hidden layer
         {"1":2.3,"2":3.7,"3":3.3,"4":4.1,"5":0,"6":0,"7":0,"8":0,"9":0,"10":0,"11":0,"12":0,"13":0,"14":0,"15":0,
          "16":0,"17":0,"18":0,"19":0,"20":0},#node map
         [],#connection network
         2.5,#stepsize
         1,#next innovation number
-        21,#next node number
+        20,#next node number
         1,#min weight 
         100 #max weight
     )
@@ -227,6 +235,8 @@ def neat_training():
     #training
     global population
     population = []
+    target = Entity(model='cube', color=color.green, position = (0,0,100))
+    target.scale_y = 10
     for i,item in enumerate(initial_population):
         population.append(Agent(i,item,"cube",(0,0.5,0),(0,0,100)))
 
