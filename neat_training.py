@@ -108,10 +108,10 @@ class Agent(Entity):
             d6 = min(raycast6.distance,max_dist)
             d7 = min(raycast7.distance,max_dist)
             d8 = min(raycast8.distance,max_dist)
-            # print(d1,d2,d3,d4,d5,d6,d7,d8)
+            print(d1,d2,d3,d4,d5,d6,d7,d8)
 
             if mod(d1) < 0.55 or mod(d3) < 0.55 or mod(d5) < 0.55 or mod(d7) < 0.55:
-                # print("collision detected")
+                print("collision detected")
                 self.tof = time.time()-self.st_time
                 self.displacement = math.dist(pos,self.target_pos)
                 self.is_alive = False
@@ -136,6 +136,8 @@ class Agent(Entity):
             #forward
             global speed
 
+            #testing override
+            _max = 16
             if _max == 15:
                 x_dist = time.dt*speed*math.sin(angle1)
                 z_dist = time.dt*speed*math.cos(angle1)
@@ -251,7 +253,7 @@ def main():
     vcamera = EditorCamera()
     Entity(model='plane', scale=1000, color=color.white, shader=lit_with_shadows_shader)
     global speed
-    speed = 20
+    speed = 10
     global terrain
     terrain = []
     pivot = Entity(position = (0,10,0))
