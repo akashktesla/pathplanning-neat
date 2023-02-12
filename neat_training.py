@@ -138,8 +138,6 @@ class Agent(Entity):
             #forward
             global speed
 
-            #testing override
-            _max = 16
             if _max == 15:
                 x_dist = time.dt*speed*math.sin(angle1)
                 z_dist = time.dt*speed*math.cos(angle1)
@@ -189,7 +187,7 @@ def update():
     if pop_no == 0:
         #upgrade to next gen, calculate fitness
         #selection
-        print("selection process")
+        # print("selection process")
         tof_list = []
         dist_list = []
         disp_list = []
@@ -200,30 +198,37 @@ def update():
             tof_list.append(i.tof)
             dist_list.append(i.distance)
             disp_list.append(i.displacement)
-            # i.update_fitness()
-            # print(i.fitness)
-            # print(type(i))
-        print(tof_list)
-        print(dist_list)
-        print(disp_list)
-        max_tof = max(tof_list)
-        max_dist = max(dist_list)
-        max_disp = max(disp_list)
-        min_tof = min(tof_list)
-        min_dist = min(dist_list)
-        min_disp = min(disp_list)
+        #change this to absolute maximum and minimum
+        max_tof = 1 
+        max_dist = 100 
+        max_disp = 100 
+        min_tof = 0
+        min_dist = 0
+        min_disp = 0 
+        fitness_list = []
         for i in range(len(population)):
             tof_i = (tof_list[i] - min_tof)/(max_tof - min_tof)
             dist_i = (dist_list[i] - min_dist)/(max_dist - min_dist)
             disp_i = 1-(disp_list[i] - min_disp)/(max_disp - min_disp)
+            fitness = tof_i + dist_i + disp_i
+            fitness_list.append(fitness)
             sc_tof_list.append(tof_i)
             sc_dist_list.append(dist_i)
             sc_disp_list.append(disp_i)
-
-        print(sc_tof_list)
-        print(sc_disp_list)
-        print(sc_dist_list)
-
+            population[i].update_fitness(fitness)
+        # print(f"fitness list {fitness_list}")
+        #selection - selecting best player
+        best_player = population[fitness_list.index(max(fitness_list))]
+        next_population = mutation(best_player.nn)
+        population_degeneration() #destroying all agents in the population
+        pop_no = 16
+        #generating population and spawning at the start
+        for i,item in enumerate(next_population):
+            population.append(Agent(i,item,"cube",(0,0.5,0),(0,0,100)))
+        global generation_number
+        generation_number +=1
+        print(f"best player: {best_player.nn.print()}")
+        print(f"generation: {generation_number}")
 
     pass
 def terrain_generation():
@@ -298,7 +303,7 @@ def main():
     vcamera = EditorCamera()
     Entity(model='plane', scale=1000, color=color.white, shader=lit_with_shadows_shader)
     global speed
-    speed = 10
+    speed = 1
     global terrain
     terrain = []
     pivot = Entity(position = (0,10,0))
