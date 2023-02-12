@@ -57,11 +57,12 @@ class Agent(Entity):
         pass
 
     def update(self):
-        print(f"dist:{self.distance}")
-        print(f"disp:{self.displacement}")
-        print(f"tof: {self.tof}")
-        print(f"id: {self.pop_index}")
-        print(f"alive: {self.is_alive}")
+        # print(f"dist:{self.distance}")
+        # print(f"disp:{self.displacement}")
+        # print(f"tof: {self.tof}")
+        # print(f"id: {self.pop_index}")
+        # print(f"alive: {self.is_alive}")
+        global pop_no
         if self.is_alive:
             # position to neural network
             pos = self.position
@@ -108,13 +109,14 @@ class Agent(Entity):
             d6 = min(raycast6.distance,max_dist)
             d7 = min(raycast7.distance,max_dist)
             d8 = min(raycast8.distance,max_dist)
-            print(d1,d2,d3,d4,d5,d6,d7,d8)
+            # print(d1,d2,d3,d4,d5,d6,d7,d8)
 
             if mod(d1) < 0.55 or mod(d3) < 0.55 or mod(d5) < 0.55 or mod(d7) < 0.55:
-                print("collision detected")
+                # print("collision detected")
                 self.tof = time.time()-self.st_time
                 self.displacement = math.dist(pos,self.target_pos)
                 self.is_alive = False
+                pop_no -=1
 
             #setting the distance as input layer
             self.nn.node_map["1"] = d1
@@ -166,9 +168,8 @@ class Agent(Entity):
                 self.z += z_dist
                 self.distance += mod(x_dist) + mod(z_dist)
 
-    def update_fitness(self):
-        #updates fitness according to the parameters
-        pass 
+    def update_fitness(self,fitness):
+        self.fitness = fitness
 
 def input(key):
     if key=="d":
@@ -182,6 +183,48 @@ def input(key):
 
 def update():
     # update for cmd
+    global pop_no
+    global population
+    print(f"pop_no: {pop_no}")
+    if pop_no == 0:
+        #upgrade to next gen, calculate fitness
+        #selection
+        print("selection process")
+        tof_list = []
+        dist_list = []
+        disp_list = []
+        sc_tof_list = []
+        sc_dist_list = []
+        sc_disp_list = []
+        for i in population:
+            tof_list.append(i.tof)
+            dist_list.append(i.distance)
+            disp_list.append(i.displacement)
+            # i.update_fitness()
+            # print(i.fitness)
+            # print(type(i))
+        print(tof_list)
+        print(dist_list)
+        print(disp_list)
+        max_tof = max(tof_list)
+        max_dist = max(dist_list)
+        max_disp = max(disp_list)
+        min_tof = min(tof_list)
+        min_dist = min(dist_list)
+        min_disp = min(disp_list)
+        for i in range(len(population)):
+            tof_i = (tof_list[i] - min_tof)/(max_tof - min_tof)
+            dist_i = (dist_list[i] - min_dist)/(max_dist - min_dist)
+            disp_i = 1-(disp_list[i] - min_disp)/(max_disp - min_disp)
+            sc_tof_list.append(tof_i)
+            sc_dist_list.append(dist_i)
+            sc_disp_list.append(disp_i)
+
+        print(sc_tof_list)
+        print(sc_disp_list)
+        print(sc_dist_list)
+
+
     pass
 def terrain_generation():
     global terrain
@@ -239,6 +282,8 @@ def neat_training():
     population = []
     target = Entity(model='cube', color=color.green, position = (0,0,100))
     target.scale_y = 10
+    global pop_no
+    pop_no = 16
     for i,item in enumerate(initial_population):
         population.append(Agent(i,item,"cube",(0,0.5,0),(0,0,100)))
 
