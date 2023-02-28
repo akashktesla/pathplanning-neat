@@ -104,12 +104,11 @@ def crossover(a,b):
     return return_network
 
 def mutation(nn):
-    # print("mutation start")
     nl = [nn]
     tl = [copy.deepcopy(nn)]
     cl = []
     for i in tl:
-        temp = mutation_an(i)
+        temp = mutation_c(i)
         cl.append(temp)
 
     nl = nl+cl
@@ -117,20 +116,20 @@ def mutation(nn):
     tl = clone_list(nl)
     cl = []
     for i in tl:
-        cl.append(mutation_c(i))
-    nl = nl+cl
-
-    tl = clone_list(nl)
-    cl = []
-    for i in tl:
-        cl.append(mutation_dn(i))
-    nl = nl+cl
-
-    tl = clone_list(nl)
-    cl = []
-    for i in tl:
         cl.append(mutation_cw(i))
     nl = nl+cl
+
+    # tl = clone_list(nl)
+    # cl = []
+    # for i in tl:
+    #     cl.append(mutation_c(i))
+    # nl = nl+cl
+
+    # tl = clone_list(nl)
+    # cl = []
+    # for i in tl:
+    #     cl.append(mutation_cw(i))
+    # nl = nl+cl
 
     return nl
 
@@ -177,10 +176,8 @@ def mutation_c(nn):
 
 # mutation add new node
 def mutation_an(nn):
-    # print("mutation an ")
     #create new node
     node_id = nn.next_nn 
-    #don't forget to update next_nn 
     #input to node
     rin = nn.input_layer[randint(0,len(nn.input_layer)-1)]
     #node to output
@@ -190,7 +187,6 @@ def mutation_an(nn):
     itn_node = Connect(nn.next_in,rin,node_id,random.uniform(nn.min_weight,nn.max_weight))
     #node to output connection
     nto_node = Connect(nn.next_in+1,node_id,rout,random.uniform(nn.min_weight,nn.max_weight))
-
     #updates
     #updating connection network
     nn.c_network.append(itn_node)
@@ -232,6 +228,10 @@ def calculate(nn):
     # nn.print()
     # for i in nn.output_layer:
         # print(f"output at node:{i} is {nn.node_map[str(i)]}")
+
+
+def calculate_2(nn):
+    pass
 
 def crossover_test():
     parent1 = NeuralNetwork(['1','2','3','4'], #input network

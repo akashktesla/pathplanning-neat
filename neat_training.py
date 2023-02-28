@@ -180,55 +180,55 @@ def input(key):
     global aki
 
 def update():
-    ## update for cmd
-    #global pop_no
-    #global population
-    #print(f"pop_no: {pop_no}")
-    #if pop_no == 0:
-    #    #upgrade to next gen, calculate fitness
-    #    #selection
-    #    # print("selection process")
-    #    tof_list = []
-    #    dist_list = []
-    #    disp_list = []
-    #    sc_tof_list = []
-    #    sc_dist_list = []
-    #    sc_disp_list = []
-    #    for i in population:
-    #        tof_list.append(i.tof)
-    #        dist_list.append(i.distance)
-    #        disp_list.append(i.displacement)
-    #    #change this to absolute maximum and minimum
-    #    max_tof = 1 
-    #    max_dist = 100 
-    #    max_disp = 100 
-    #    min_tof = 0
-    #    min_dist = 0
-    #    min_disp = 0 
-    #    fitness_list = []
-    #    for i in range(len(population)):
-    #        tof_i = (tof_list[i] - min_tof)/(max_tof - min_tof)
-    #        dist_i = (dist_list[i] - min_dist)/(max_dist - min_dist)
-    #        disp_i = 1-(disp_list[i] - min_disp)/(max_disp - min_disp)
-    #        fitness = tof_i + dist_i + disp_i
-    #        fitness_list.append(fitness)
-    #        sc_tof_list.append(tof_i)
-    #        sc_dist_list.append(dist_i)
-    #        sc_disp_list.append(disp_i)
-    #        population[i].update_fitness(fitness)
-    #    # print(f"fitness list {fitness_list}")
-    #    #selection - selecting best player
-    #    best_player = population[fitness_list.index(max(fitness_list))]
-    #    next_population = mutation(best_player.nn)
-    #    population_degeneration() #destroying all agents in the population
-    #    pop_no = 16
-    #    #generating population and spawning at the start
-    #    for i,item in enumerate(next_population):
-    #        population.append(Agent(i,item,"cube",(0,0.5,0),(0,0,100)))
-    #    global generation_number
-    #    generation_number +=1
-    #    print(f"best player: {best_player.nn.print()}")
-    #    print(f"generation: {generation_number}")
+    #update for cmd
+    global pop_no
+    global population
+    print(f"pop_no: {pop_no}")
+    if pop_no == 0:
+        #upgrade to next gen, calculate fitness
+        #selection
+        # print("selection process")
+        tof_list = []
+        dist_list = []
+        disp_list = []
+        sc_tof_list = []
+        sc_dist_list = []
+        sc_disp_list = []
+        for i in population:
+            tof_list.append(i.tof)
+            dist_list.append(i.distance)
+            disp_list.append(i.displacement)
+        #change this to absolute maximum and minimum
+        max_tof = 1 
+        max_dist = 100 
+        max_disp = 100 
+        min_tof = 0
+        min_dist = 0
+        min_disp = 0 
+        fitness_list = []
+        for i in range(len(population)):
+            tof_i = (tof_list[i] - min_tof)/(max_tof - min_tof)
+            dist_i = (dist_list[i] - min_dist)/(max_dist - min_dist)
+            disp_i = 1-(disp_list[i] - min_disp)/(max_disp - min_disp)
+            fitness = tof_i + dist_i + disp_i
+            fitness_list.append(fitness)
+            sc_tof_list.append(tof_i)
+            sc_dist_list.append(dist_i)
+            sc_disp_list.append(disp_i)
+            population[i].update_fitness(fitness)
+        # print(f"fitness list {fitness_list}")
+        #selection - selecting best player
+        best_player = population[fitness_list.index(max(fitness_list))]
+        next_population = mutation(best_player.nn)
+        population_degeneration() #destroying all agents in the population
+        pop_no = 4
+        #generating population and spawning at the start
+        for i,item in enumerate(next_population):
+            population.append(Agent(i,item,"cube",(0,0.5,0),(0,0,100)))
+        global generation_number
+        generation_number +=1
+        print(f"best player: {best_player.nn.print()}")
+        print(f"generation: {generation_number}")
 
 def terrain_generation():
     global terrain
@@ -269,10 +269,15 @@ def neat_training():
     nn = NeuralNetwork(
         [1,2,3,4,5,6,7,8,9,10,11,12,13,14],#input layer
         [15,16,17,18],#output layer
-        [19],#hidden layer
+        [19,20,21,22,23,24],#hidden layer
         {"1":2.3,"2":3.7,"3":3.3,"4":4.1,"5":0,"6":0,"7":0,"8":0,"9":0,"10":0,"11":0,"12":0,"13":0,"14":0,"15":0,
-         "16":0,"17":0,"18":0,"19":0,"20":0},#node map
-        [],#connection network
+         "16":0,"17":0,"18":0,"19":0,"20":0,"21":0,"22":0,"23":0,"24":0},
+        [
+            Connect(1,1,15,1),Connect(2,2,15,1),Connect(3,8,15,1),
+            Connect(4,4,16,1),Connect(5,5,16,1),Connect(6,6,16,1),
+            Connect(7,2,17,1),Connect(8,3,17,1),Connect(9,4,17,1),
+            Connect(10,6,18,1),Connect(11,7,18,1),Connect(12,8,18,1),
+        ],#connection network
         2.5,#stepsize
         1,#next innovation number
         20,#next node number
@@ -287,7 +292,7 @@ def neat_training():
     target = Entity(model='cube', color=color.green, position = (0,0,100))
     target.scale_y = 10
     global pop_no
-    pop_no = 16
+    pop_no = 4
     for i,item in enumerate(initial_population):
         population.append(Agent(i,item,"cube",(0,0.5,0),(0,0,100)))
 
