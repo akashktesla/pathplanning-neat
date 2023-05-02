@@ -202,7 +202,8 @@ def mutation_an(nn):
 def mutation_cw(nn):
     if len(nn.c_network) >0:
         random_node = nn.c_network[randint(0,len(nn.c_network)-1)]
-        random_node.weight = random.uniform(random_node.weight-nn.mutation_stepsize,random_node.weight+nn.mutation_stepsize)
+        random_node.weight = random_node.weight+random.uniform(-1,1)
+        # random_node.weight = random.uniform(random_node.weight-nn.mutation_stepsize,random_node.weight+nn.mutation_stepsize)
     return nn
 
 #disables random node... mayb use it in cross over ig...

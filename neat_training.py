@@ -179,56 +179,56 @@ def input(key):
     global y
     global aki
 
-def update():
-    #update for cmd
-    global pop_no
-    global population
-    print(f"pop_no: {pop_no}")
-    if pop_no == 0:
-        #upgrade to next gen, calculate fitness
-        #selection
-        # print("selection process")
-        tof_list = []
-        dist_list = []
-        disp_list = []
-        sc_tof_list = []
-        sc_dist_list = []
-        sc_disp_list = []
-        for i in population:
-            tof_list.append(i.tof)
-            dist_list.append(i.distance)
-            disp_list.append(i.displacement)
-        #change this to absolute maximum and minimum
-        max_tof = 1 
-        max_dist = 100 
-        max_disp = 100 
-        min_tof = 0
-        min_dist = 0
-        min_disp = 0 
-        fitness_list = []
-        for i in range(len(population)):
-            tof_i = (tof_list[i] - min_tof)/(max_tof - min_tof)
-            dist_i = (dist_list[i] - min_dist)/(max_dist - min_dist)
-            disp_i = 1-(disp_list[i] - min_disp)/(max_disp - min_disp)
-            fitness = tof_i + dist_i + disp_i
-            fitness_list.append(fitness)
-            sc_tof_list.append(tof_i)
-            sc_dist_list.append(dist_i)
-            sc_disp_list.append(disp_i)
-            population[i].update_fitness(fitness)
-        # print(f"fitness list {fitness_list}")
-        #selection - selecting best player
-        best_player = population[fitness_list.index(max(fitness_list))]
-        next_population = mutation(best_player.nn)
-        population_degeneration() #destroying all agents in the population
-        pop_no = 4
-        #generating population and spawning at the start
-        for i,item in enumerate(next_population):
-            population.append(Agent(i,item,"cube",(0,0.5,0),(0,0,100)))
-        global generation_number
-        generation_number +=1
-        print(f"best player: {best_player.nn.print()}")
-        print(f"generation: {generation_number}")
+#def update():
+#    #update for cmd
+#    global pop_no
+#    global population
+#    print(f"pop_no: {pop_no}")
+#    if pop_no == 0:
+#        #upgrade to next gen, calculate fitness
+#        #selection
+#        # print("selection process")
+#        tof_list = []
+#        dist_list = []
+#        disp_list = []
+#        sc_tof_list = []
+#        sc_dist_list = []
+#        sc_disp_list = []
+#        for i in population:
+#            tof_list.append(i.tof)
+#            dist_list.append(i.distance)
+#            disp_list.append(i.displacement)
+#        #change this to absolute maximum and minimum
+#        max_tof = 1 
+#        max_dist = 100 
+#        max_disp = 100 
+#        min_tof = 0
+#        min_dist = 0
+#        min_disp = 0 
+#        fitness_list = []
+#        for i in range(len(population)):
+#            tof_i = (tof_list[i] - min_tof)/(max_tof - min_tof)
+#            dist_i = (dist_list[i] - min_dist)/(max_dist - min_dist)
+#            disp_i = 2.5*(1-(disp_list[i] - min_disp)/(max_disp - min_disp))
+#            fitness = tof_i + dist_i + disp_i
+#            fitness_list.append(fitness)
+#            sc_tof_list.append(tof_i)
+#            sc_dist_list.append(dist_i)
+#            sc_disp_list.append(disp_i)
+#            population[i].update_fitness(fitness)
+#        # print(f"fitness list {fitness_list}")
+#        #selection - selecting best player
+#        best_player = population[fitness_list.index(max(fitness_list))]
+#        next_population = mutation(best_player.nn)
+#        population_degeneration() #destroying all agents in the population
+#        pop_no = 4
+#        #generating population and spawning at the start
+#        for i,item in enumerate(next_population):
+#            population.append(Agent(i,item,"cube",(0,0.5,0),(0,0,100)))
+#        global generation_number
+#        generation_number +=1
+#        print(f"best player: {best_player.nn.print()}")
+#        print(f"generation: {generation_number}")
 
 def terrain_generation():
     global terrain

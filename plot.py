@@ -2,78 +2,16 @@ import random
 import numpy as np
 import matplotlib.pyplot as plt  
 
-class car:
-    def __init__(self,name,ts,mvsold,avsold,leprice,heprice):
-        self.name = name
-        self.totalsales = ts
-        self.leprice = leprice 
-        self.heprice = heprice
-        self.mvsold = mvsold
-        self.avsold = avsold
 
-
+#idk fitness vs generation
 def plot1():
+    y = [1.5, 3.0, 4.6, 5.9, 6.8, 7.4, 7.8, 8.2, 8.5, 8.8,9.0, 9.2, 9.4, 9.5, 9.6, 9.7, 9.8, 9.9, 10.0, 10.1,10.2, 10.3, 10.4, 10.5, 10.6, 10.7, 10.8, 10.9, 11.0, 11.1,11.2, 11.3, 11.4, 11.5, 11.6, 11.7, 11.8, 11.9, 12.0, 12.1,12.2, 12.3, 12.4, 12.5, 12.6, 12.7, 12.8, 12.9, 13.0, 13.1,13.2, 13.3, 13.4, 13.5, 13.6, 13.7, 13.8, 13.9, 14.0, 14.1, 14.2, 14.3, 14.4, 14.5, 14.6, 14.7, 14.8, 14.9, 15.0]
 
-    #difference between center of the original object and object's virtual position
-    plt.xlabel("Frames")
-    plt.ylabel("Center distance error")
-    plt.title("")
-    y = []
-    for i in range(1000):
-        if random.randint(0,4)==3:
-            y.append(random.randint(2,6))
-        else:
-            y.append(random.uniform(3,5))
-    x = list(range(0,1000))
-    plt.plot(x,y)
-    plt.show()
-def plot2():
-    x = [4,2,-2,-5,-5,-6,-7,-7,-6,-5,-5,-4,-2,-1,-1, 2, 1, 1, 2, 4, 5,5,2,1,1,2,5,6,6,5]
-    y = [6,8, 8, 5,-2,-2,-1, 2, 3, 3,-6,-7,-7,-6,-3,-3,-3,-6,-7,-7,-6,1,1,2,4,5,5,4,2,1]
+    x = range(1,len(y)+1)
     plt.plot(x,y)
     plt.show()
 
 
-class mov:
-    def __init__(self,frame,mov):
-        self.frame = frame
-        self.mov = mov
 
-def genrand(flag):
-    match flag:
-        case 1:
-            return random.uniform(2,3)
-        case 2:
-            return random.uniform(3,4)
-        case 3:
-            return random.uniform(4,5)
-        case 4:
-            return random.uniform(5,6)
-
-def geny(fm):
-    returns = []
-    flag = 1
-    count = 0
-    for i in range(200):
-        if i == fm[count].frame:
-            returns.append(genrand(fm[count].mov))
-            if count<len(fm)-1:
-                count+=1
-        else:
-            returns.append(genrand(flag))
-    return returns
-
-def plot3():
-    fm = [mov(10,1),mov(24,2),mov(50,1),mov(77,4),mov(80,3),mov(120,2),mov(152,3)]
-    y = geny(fm)
-    x = list(range(200))
-    plt.xlabel("Frames")
-    plt.ylabel("center error")
-    plt.plot(x,y)
-    plt.show()
-
-
-def main():
-    plot2()
-    
-main()
+if __name__ == "__main__":
+    plot1()
