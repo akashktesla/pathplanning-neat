@@ -57,11 +57,11 @@ class Agent(Entity):
         pass
 
     def update(self):
-        # print(f"dist:{self.distance}")
-        # print(f"disp:{self.displacement}")
-        # print(f"tof: {self.tof}")
-        # print(f"id: {self.pop_index}")
-        # print(f"alive: {self.is_alive}")
+        print(f"dist:{self.distance}")
+        print(f"disp:{self.displacement}")
+        print(f"tof: {self.tof}")
+        print(f"id: {self.pop_index}")
+        print(f"alive: {self.is_alive}")
         global pop_no
         if self.is_alive:
             # position to neural network
@@ -81,14 +81,14 @@ class Agent(Entity):
             angle7 = (rot+270)*math.pi/180
             angle8 = (rot+315)*math.pi/180
 
-            dir1 = (sin(angle1),cos(angle1))
-            dir2 = (sin(angle2),cos(angle2))
-            dir3 = (sin(angle3),cos(angle3))
-            dir4 = (sin(angle4),cos(angle4))
-            dir5 = (sin(angle5),cos(angle5))
-            dir6 = (sin(angle6),cos(angle6))
-            dir7 = (sin(angle7),cos(angle7))
-            dir8 = (sin(angle8),cos(angle8))
+            dir1 = (0,0,1) 
+            dir2 = (1,0,1) 
+            dir3 = (1,0,0)
+            dir4 = (1,0,-1)
+            dir5 = (0,0,-1)
+            dir6 = (-1,0,-1)
+            dir7 = (-1,0,0)
+            dir8 = (-1,0,1)
 
             raycast1 = raycast(self.position,dir1)
             raycast2 = raycast(self.position,dir2)
@@ -179,56 +179,56 @@ def input(key):
     global y
     global aki
 
-#def update():
-#    #update for cmd
-#    global pop_no
-#    global population
-#    print(f"pop_no: {pop_no}")
-#    if pop_no == 0:
-#        #upgrade to next gen, calculate fitness
-#        #selection
-#        # print("selection process")
-#        tof_list = []
-#        dist_list = []
-#        disp_list = []
-#        sc_tof_list = []
-#        sc_dist_list = []
-#        sc_disp_list = []
-#        for i in population:
-#            tof_list.append(i.tof)
-#            dist_list.append(i.distance)
-#            disp_list.append(i.displacement)
-#        #change this to absolute maximum and minimum
-#        max_tof = 1 
-#        max_dist = 100 
-#        max_disp = 100 
-#        min_tof = 0
-#        min_dist = 0
-#        min_disp = 0 
-#        fitness_list = []
-#        for i in range(len(population)):
-#            tof_i = (tof_list[i] - min_tof)/(max_tof - min_tof)
-#            dist_i = (dist_list[i] - min_dist)/(max_dist - min_dist)
-#            disp_i = 2.5*(1-(disp_list[i] - min_disp)/(max_disp - min_disp))
-#            fitness = tof_i + dist_i + disp_i
-#            fitness_list.append(fitness)
-#            sc_tof_list.append(tof_i)
-#            sc_dist_list.append(dist_i)
-#            sc_disp_list.append(disp_i)
-#            population[i].update_fitness(fitness)
-#        # print(f"fitness list {fitness_list}")
-#        #selection - selecting best player
-#        best_player = population[fitness_list.index(max(fitness_list))]
-#        next_population = mutation(best_player.nn)
-#        population_degeneration() #destroying all agents in the population
-#        pop_no = 4
-#        #generating population and spawning at the start
-#        for i,item in enumerate(next_population):
-#            population.append(Agent(i,item,"cube",(0,0.5,0),(0,0,100)))
-#        global generation_number
-#        generation_number +=1
-#        print(f"best player: {best_player.nn.print()}")
-#        print(f"generation: {generation_number}")
+def update():
+    #update for cmd
+    global pop_no
+    global population
+    print(f"pop_no: {pop_no}")
+    if pop_no == 0:
+        #upgrade to next gen, calculate fitness
+        #selection
+        # print("selection process")
+        tof_list = []
+        dist_list = []
+        disp_list = []
+        sc_tof_list = []
+        sc_dist_list = []
+        sc_disp_list = []
+        for i in population:
+            tof_list.append(i.tof)
+            dist_list.append(i.distance)
+            disp_list.append(i.displacement)
+        #change this to absolute maximum and minimum
+        max_tof = 1 
+        max_dist = 100 
+        max_disp = 100 
+        min_tof = 0
+        min_dist = 0
+        min_disp = 0 
+        fitness_list = []
+        for i in range(len(population)):
+            tof_i = (tof_list[i] - min_tof)/(max_tof - min_tof)
+            dist_i = (dist_list[i] - min_dist)/(max_dist - min_dist)
+            disp_i = 2.5*(1-(disp_list[i] - min_disp)/(max_disp - min_disp))
+            fitness = tof_i + dist_i + disp_i
+            fitness_list.append(fitness)
+            sc_tof_list.append(tof_i)
+            sc_dist_list.append(dist_i)
+            sc_disp_list.append(disp_i)
+            population[i].update_fitness(fitness)
+        # print(f"fitness list {fitness_list}")
+        #selection - selecting best player
+        best_player = population[fitness_list.index(max(fitness_list))]
+        next_population = mutation(best_player.nn)
+        population_degeneration() #destroying all agents in the population
+        pop_no = 16
+        #generating population and spawning at the start
+        for i,item in enumerate(next_population):
+            population.append(Agent(i,item,"cube",(0,0.5,0),(0,0,100)))
+        global generation_number
+        generation_number +=1
+        print(f"best player: {best_player.nn.print()}")
+        print(f"generation: {generation_number}")
 
 def terrain_generation():
     global terrain
@@ -250,7 +250,7 @@ def terrain_generation():
     terrain.append(a)
 
     for i in range(-10,100):
-        terrain.append(Enemy((randint(-10,10),0,i)))
+        terrain.append(Enemy((randint(-20,20),0,i)))
 
 def terrain_degeneration():
     global terrain
@@ -292,7 +292,7 @@ def neat_training():
     target = Entity(model='cube', color=color.green, position = (0,0,100))
     target.scale_y = 10
     global pop_no
-    pop_no = 4
+    pop_no = 16
     for i,item in enumerate(initial_population):
         population.append(Agent(i,item,"cube",(0,0.5,0),(0,0,100)))
 
@@ -307,7 +307,7 @@ def main():
     vcamera = EditorCamera()
     Entity(model='plane', scale=1000, color=color.white, shader=lit_with_shadows_shader)
     global speed
-    speed = 1
+    speed = 1.5
     global terrain
     terrain = []
     pivot = Entity(position = (0,10,0))

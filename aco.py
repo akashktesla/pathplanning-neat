@@ -1,6 +1,6 @@
-# import cv2 as cv
 import numpy as np
 import matplotlib.pyplot as plt  
+import time
 
 def gen_target(img):
     x = np.random.randint(50, 450)
@@ -8,6 +8,26 @@ def gen_target(img):
     img[y-50:y+50, x-50:x+50] = (0, 0, 255)
     # cv.rectangle(img, (x-50, y-50), (x+50, y+50), (0, 0, 255), -1)
 
+def ex_tracking(img,target):
+    target_vec = target.flatten()
+    cor_list = []
+    index_list = []
+    for i in range(50,450):
+        for j in range(50,450):
+            spx,spy = i-50,j-50
+            epx,epy = i+50,j+50
+            roi = img[spy:epy,spx:epx]
+            roi_vec = roi.flatten()
+            cor = np.corrcoef(roi_vec,target_vec)[0,1]
+            print(cor)
+            if cor>0:
+                cor_list.append(cor);
+            else:
+                cor_list.append(0)
+            index_list.append((i,j))
+    confidence = max(cor_list)
+    _index = index_list.index(confidence).any()
+    return _index,confidence
 def aco_tracking(img,target,loop_count):
     target_vec = target.flatten()
     cor_list = []
@@ -57,7 +77,7 @@ def aco_loop(img,target,spx,spy,epx,epy):
     cy=int((spy+epy)/2)
     ant_list = [(cx,cy)]
     ant_count = 0
-    while ant_count<5:
+    while ant_count<10:
         x = np.random.randint(spx,epx)
         y = np.random.randint(spy,epy)
         if x>50 and x<450 and y>50 and y<450:
@@ -87,26 +107,73 @@ if __name__=="__main__":
     img = 255 * np.zeros((500, 500, 3), dtype=np.uint8)
     target = np.zeros((100, 100, 3), dtype=np.uint8)
     target[:, :] = (0, 0, 255)
-    x = list(range(1000))
-    y = []
-    for i in range(1000):
-        img = 255 * np.zeros((500, 500, 3), dtype=np.uint8)
-        gen_target(img)
-        _index,conf = aco_tracking(img,target,loop_count=0)
-        y.append(conf)
-    print(x,y)
-    plt.plot(x,y)
-    x = list(range(1000))
-    y = []
-    for i in range(1000):
-        img = 255 * np.zeros((500, 500, 3), dtype=np.uint8)
-        gen_target(img)
-        _index,conf = aco_tracking(img,target,loop_count=3)
-        y.append(conf)
-    print(x,y)
-    plt.plot(x,y)
-    plt.show()
-    cv.imshow('Image', img)
-    key = cv.waitKey(0)
-    cv.destroyAllWindows()
+    # x = list(range(1000))
+    # y = []
+    # for i in range(1000):
+    #     img = 255 * np.zeros((500, 500, 3), dtype=np.uint8)
+    #     gen_target(img)
+    #     st = time.time()
+    #     _index,conf = aco_tracking(img,target,loop_count=0)
+    #     _time = time.time()-st
+    #     y.append(conf)
+    # print(x,y)
+    # print("==============================================")
+    # print(f"min: {min(y)}")
+    # print(f"max: {max(y)}")
+    # print(f"avg: {sum(y)/len(y)}")
+    # plt.plot(x,y,label="loop_count = 0")
+    # x = list(range(1000))
+    # y = []
+    # for i in range(1000):
+    #     img = 255 * np.zeros((500, 500, 3), dtype=np.uint8)
+    #     gen_target(img)
+    #     st = time.time()
+    #     _index,conf = aco_tracking(img,target,loop_count=5)
+    #     _time = time.time()-st
+    #     y.append(conf)
+    # print(x,y)
+    # print("==============================================5")
+    # print(f"min: {min(y)}")
+    # print(f"max: {max(y)}")
+    # print(f"avg: {sum(y)/len(y)}")
+    # # plt.plot(x,y,label="loop_count = 5")
 
+    x = list(range(1000))
+    y = []
+    for i in range(1000):
+        img = 255 * np.zeros((500, 500, 3), dtype=np.uint8)
+        gen_target(img)
+        st = time.time()
+        _index,conf = aco_tracking(img,target,loop_count=10)
+        _time = time.time()-st
+        y.append(conf)
+    print(x,y)
+    print("==============================================10")
+    print(f"min: {min(y)}")
+    print(f"max: {max(y)}")
+    print(f"avg: {sum(y)/len(y)}")
+    plt.plot(x,y,label="loop_count = 10")
+
+
+#     x = list(range(20))
+#     y = []
+#     for j in range(20):
+#         z = []
+#         for i in range(100):
+#             img = 255 * np.zeros((500, 500, 3), dtype=np.uint8)
+#             gen_target(img)
+#             st = time.time()
+#             _index,conf = aco_tracking(img,target,loop_count=j)
+#             _time = time.time()-st
+#             z.append(conf)
+#         avg = sum(z)/len(z)
+#         print(f"avg: {avg}")
+#         y.append(avg)
+
+#     print(x,y)
+#     plt.plot(x,y)
+
+    plt.xlabel("No of tests")
+    plt.ylabel("Complexity")
+    plt.legend()
+    plt.show()
